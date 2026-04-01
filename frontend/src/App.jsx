@@ -3,18 +3,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
-// --- CONTEXT & PROVIDERS ---
-import { AuthProvider } from './context/AuthContext';
+// --- CONTEXT ---
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 
 // --- COMPONENTS ---
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ProtectedRoute from './components/ProtectedRoute'; // Assumes this component exists and works
+import ProtectedRoute from './components/ProtectedRoute';
 
 // --- PAGES ---
 import HomePage from './pages/HomePage';
-import ListingsPage from './pages/ListingPage'; // Corrected typo
+import ListingsPage from './pages/ListingPage';
 import PropertyDetailsPage from './pages/PropertyDetailsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -26,54 +26,87 @@ import ManagePropertyPage from './pages/ManagePropertyPage';
 
 import './App.css';
 
-// --- Layout Component to Handle Conditional Header/Footer ---
+// --- LAYOUT ---
 const AppLayout = () => {
   const location = useLocation();
-  
-  // Define paths where the header and footer should be hidden
+  const { isAuthenticated } = useAuth();
+
   const hideLayoutPaths = ['/signin', '/signup'];
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Conditionally render Header and Footer */}
+
+      {/* HEADER */}
       {!hideLayoutPaths.includes(location.pathname) && <Header />}
-      
+
       <main className="flex-grow">
         <Routes>
-          {/* --- PUBLIC ROUTES (Accessible to everyone) --- */}
-          <Route path="/" element={<HomePage />} />
+
+          {/* ✅ DEFAULT ROUTE */}
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <HomePage /> : <Navigate to="/signin" replace />
+            }
+          />
+
+          {/* PUBLIC ROUTES */}
           <Route path="/listings" element={<ListingsPage />} />
           <Route path="/property/:id" element={<PropertyDetailsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          
-          {/* --- AUTHENTICATION ROUTES (No Header/Footer) --- */}
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          
-          {/* --- PUBLIC PROPERTY MANAGEMENT ROUTES --- */}
-          {/* This route is public because the :token acts as a secret key */}
+
+          {/* AUTH ROUTES */}
+          <Route
+            path="/signin"
+            element={
+              !isAuthenticated ? <SignInPage /> : <Navigate to="/" replace />
+            }
+          />
+
+          <Route
+            path="/signup"
+            element={
+              !isAuthenticated ? <SignUpPage /> : <Navigate to="/" replace />
+            }
+          />
+
+          {/* TOKEN ROUTE */}
           <Route path="/manage-property/:token" element={<ManagePropertyPage />} />
-          
-          {/* --- PROTECTED ROUTES (Require user to be logged in) --- */}
-          {/* These routes are for user-specific actions */}
-          <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
-          
-          {/* RECOMMENDATION: Make 'Add Property' a protected route for logged-in users */}
-          <Route path="/add-property" element={<ProtectedRoute><AddPropertyPage /></ProtectedRoute>} />
-          
-          {/* Catch-all route for any undefined paths */}
+
+          {/* PROTECTED */}
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <FavoritesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/add-property"
+            element={
+              <ProtectedRoute>
+                <AddPropertyPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* FALLBACK */}
           <Route path="*" element={<Navigate to="/" replace />} />
+
         </Routes>
       </main>
-      
-      {/* Conditionally render Header and Footer */}
+
+      {/* FOOTER */}
       {!hideLayoutPaths.includes(location.pathname) && <Footer />}
+
     </div>
   );
 };
 
-
+// --- MAIN APP ---
 function App() {
   return (
     <Router>
