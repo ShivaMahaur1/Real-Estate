@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+// ✅ ADD THIS LINE (important)
+const API = import.meta.env.VITE_API_URL;
+
 const AddPropertyPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -50,7 +53,8 @@ const AddPropertyPage = () => {
     data.append('contactPhone', contactPhone);
 
     try {
-      const res = await axios.post('/api/properties', data, {
+      // ✅ FIXED API URL HERE
+      const res = await axios.post(`${API}/api/properties`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       

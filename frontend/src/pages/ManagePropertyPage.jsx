@@ -1,7 +1,11 @@
 // frontend/src/pages/ManagePropertyPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+
+// ✅ ADD THIS
+const API = import.meta.env.VITE_API_URL;
 
 const ManagePropertyPage = () => {
   const { token } = useParams();
@@ -12,7 +16,9 @@ const ManagePropertyPage = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await axios.get(`/api/properties/manage/${token}`);
+        // ✅ FIXED API CALL
+        const res = await axios.get(`${API}/api/properties/manage/${token}`);
+
         setProperty(res.data);
         setLoading(false);
       } catch (err) {
@@ -20,6 +26,7 @@ const ManagePropertyPage = () => {
         setLoading(false);
       }
     };
+
     fetchProperty();
   }, [token]);
 
@@ -29,10 +36,13 @@ const ManagePropertyPage = () => {
   return (
     <div className="container mt-5">
       <h1>Manage Your Property: {property.title}</h1>
+
       <div className="row">
         <div className="col-md-6">
           <h3>Interested Buyers ({property.interestedBuyers.length})</h3>
-          {property.interestedBuyers.length === 0 ? <p>No buyers yet.</p> : (
+          {property.interestedBuyers.length === 0 ? (
+            <p>No buyers yet.</p>
+          ) : (
             <ul className="list-group">
               {property.interestedBuyers.map((buyer, index) => (
                 <li key={index} className="list-group-item">
@@ -43,9 +53,12 @@ const ManagePropertyPage = () => {
             </ul>
           )}
         </div>
+
         <div className="col-md-6">
           <h3>Interested Renters ({property.interestedRenters.length})</h3>
-          {property.interestedRenters.length === 0 ? <p>No renters yet.</p> : (
+          {property.interestedRenters.length === 0 ? (
+            <p>No renters yet.</p>
+          ) : (
             <ul className="list-group">
               {property.interestedRenters.map((renter, index) => (
                 <li key={index} className="list-group-item">

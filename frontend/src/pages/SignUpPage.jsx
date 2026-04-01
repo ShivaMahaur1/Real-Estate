@@ -5,6 +5,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaHome, FaLock, FaEnvelope, FaUser } from 'react-icons/fa';
 
+// ✅ ADD THIS
+const API = import.meta.env.VITE_API_URL;
+
 const SignUpPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,20 +21,21 @@ const SignUpPage = () => {
     e.preventDefault();
     setError('');
 
-    // --- Frontend Validation ---
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
 
     try {
-      // --- NOTE: Make sure your backend API can handle the 'name' field ---
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
+      // ✅ FIXED API CALL
+      const response = await fetch(`${API}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
+
       const data = await response.json();
+
       if (response.ok) {
         login(data.token);
         navigate('/');
@@ -44,142 +48,70 @@ const SignUpPage = () => {
   };
 
   return (
-    // CHANGE: Main background changed to a light yellow to match the secondary theme
     <div className="min-h-screen flex flex-col lg:flex-row bg-yellow-50">
-      {/* Left Panel - Image & Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop')" }}>
-        {/* CHANGE: Overlay gradient updated to match the secondary theme */}
-        <div className="absolute inset-0 bg-gradient-to-br "></div>
-        {/* CHANGE: Content is now more explicitly centered with max-width and auto margins */}
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12 text-center max-w-md mx-auto">
-          <FaHome className="text-6xl mb-4 text-yellow-300" />
-          <h1 className="text-5xl font-bold mb-4">Join EstateHub</h1>
-          <p className="text-xl">Create your account to start exploring properties and save your favorites.</p>
+      <div className="hidden lg:flex lg:w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')" }}>
+        <div className="flex items-center justify-center w-full text-white">
+          <div className="text-center">
+            <FaHome className="text-6xl mb-4 text-yellow-300" />
+            <h1 className="text-4xl font-bold">Join EstateHub</h1>
+          </div>
         </div>
       </div>
 
-      {/* Right Panel - Sign Up Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12">
-        <div className="w-full max-w-md">
-          {/* Mobile Branding */}
-          <div className="lg:hidden text-center mb-8">
-            {/* CHANGE: Mobile logo color updated to secondary theme */}
-            <FaHome className="text-5xl text-secondary mx-auto mb-2" />
-            <h2 className="text-2xl font-bold text-gray-800">EstateHub</h2>
-          </div>
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+          <h2 className="text-3xl font-bold text-center mb-6">Sign Up</h2>
 
-          <div className="bg-white p-8 rounded-xl shadow-xl">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Sign Up for EstateHub</h2>
-            <p className="text-center text-gray-600 mb-6">Fill in the details to create your account</p>
-            
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
-                <span className="block sm:inline">{error}</span>
-              </div>
-            )}
+          {error && (
+            <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+              {error}
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="name">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaUser className="text-gray-400" />
-                  </span>
-                  <input
-                    type="text"
-                    id="name"
-                    // CHANGE: Input focus ring updated to secondary theme
-                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="w-full border p-3 rounded"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
 
-              <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="email">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaEnvelope className="text-gray-400" />
-                  </span>
-                  <input
-                    type="email"
-                    id="email"
-                    // CHANGE: Input focus ring updated to secondary theme
-                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full border p-3 rounded"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-              <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="password">
-                  Password
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaLock className="text-gray-400" />
-                  </span>
-                  <input
-                    type="password"
-                    id="password"
-                    // CHANGE: Input focus ring updated to secondary theme
-                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full border p-3 rounded"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-              <div>
-                <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="confirmPassword">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaLock className="text-gray-400" />
-                  </span>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    // CHANGE: Input focus ring updated to secondary theme
-                    className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="w-full border p-3 rounded"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-              <button
-                type="submit"
-                // CHANGE: Button color updated to secondary theme
-                className="w-full bg-secondary text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transform transition-all duration-200 hover:scale-[1.02]"
-              >
-                Create Account
-              </button>
-            </form>
+            <button className="w-full bg-secondary py-3 rounded font-bold">
+              Create Account
+            </button>
+          </form>
 
-            <p className="mt-6 text-center text-gray-600">
-              Already have an account?{' '}
-              {/* CHANGE: Link color updated to secondary theme */}
-              <Link to="/signin" className="font-semibold text-secondary hover:text-yellow-500 hover:underline">
-                Sign In
-              </Link>
-            </p>
-          </div>
+          <p className="mt-4 text-center">
+            Already have an account?{' '}
+            <Link to="/signin" className="text-secondary">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>
