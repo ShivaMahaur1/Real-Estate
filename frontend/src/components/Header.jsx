@@ -1,7 +1,7 @@
 // src/components/Header.jsx
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
 import { useAuth } from '../context/AuthContext';
 import { 
   FaHome, 
@@ -17,10 +17,23 @@ import {
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate(); // ✅ Get the navigate function
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
+
+  // ✅ Create a unified logout handler
+  const handleLogout = () => {
+    logout();
+    navigate('/signin'); // ✅ Redirect to the sign-in page
+  };
+
+  // ✅ Create a specific handler for mobile logout that also closes the sidebar
+  const handleMobileLogout = () => {
+    handleLogout(); // Call the main logout function
+    closeSidebar(); // Then close the sidebar
+  };
 
   const isActiveLink = (path) => location.pathname === path;
 
@@ -81,7 +94,7 @@ const Header = () => {
                   <span>Add Property</span>
                 </Link>
                 <button 
-                  onClick={logout} 
+                  onClick={handleLogout} // ✅ Use the new handler
                   className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <FaSignOutAlt />
@@ -182,7 +195,7 @@ const Header = () => {
                   <span>Add Property</span>
                 </Link>
                 <button 
-                  onClick={() => { logout(); closeSidebar(); }} 
+                  onClick={handleMobileLogout} // ✅ Use the new mobile-specific handler
                   className="w-full flex items-center justify-center space-x-2 bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition-colors duration-200"
                 >
                   <FaSignOutAlt />
