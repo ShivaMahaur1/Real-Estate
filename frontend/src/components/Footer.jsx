@@ -12,7 +12,7 @@ const Footer = () => {
           {/* --- Column 1: Brand & Contact Info --- */}
           <div>
             <Link to="/" className="text-3xl font-bold text-white mb-4 inline-block">
-              Estate<span className="text-secondary">Pro</span>
+              Estate<span className="text-secondary">Hub</span>
             </Link>
             <p className="mb-6 text-sm leading-relaxed">
               Your trusted partner in finding the perfect property. We are dedicated to providing exceptional service and making your real estate dreams a reality.
@@ -20,15 +20,15 @@ const Footer = () => {
             <div className="space-y-3">
               <p className="flex items-center text-sm">
                 <FaMapMarkerAlt className="mr-3 text-secondary" />
-                123 Main Street, Anytown, USA 12345
+                Ramnagar Khandauli Agra
               </p>
               <p className="flex items-center text-sm">
                 <FaPhone className="mr-3 text-secondary" />
-                <a href="tel:+1234567890" className="hover:text-white transition-colors">(123) 456-7890</a>
+                <a href="tel:+91 9639753716" className="hover:text-white transition-colors">(123) 456-7890</a>
               </p>
               <p className="flex items-center text-sm">
                 <FaEnvelope className="mr-3 text-secondary" />
-                <a href="mailto:contact@estatepro.com" className="hover:text-white transition-colors">contact@estatepro.com</a>
+                <a href="mailto:shivamahaur714@gmail.com" className="hover:text-white transition-colors">shivamahaur714@gmail.com</a>
               </p>
             </div>
           </div>
